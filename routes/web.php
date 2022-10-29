@@ -15,11 +15,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\MainController::class, 'index'])->name('index');
 
-Route::get('/auto/{car_id}', [\App\Http\Controllers\ReservationController::class, 'index'])->name('reservation_index');
-Route::get('/reservation/book/{car_id}', [\App\Http\Controllers\ReservationController::class, 'book'])->name('reservation_book');
-Route::post('/reservation/book/store/{car_id}', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservation_book_store');
-Route::post('/reservation/book/store/{car_id}', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservation_book_store');
-Route::get('/reservation/book/confirmation/{reservation}', [\App\Http\Controllers\ReservationController::class, 'confirmation'])->name('reservation_book_confirmation');
+Route::get('/auto/{car_id}', [\App\Http\Controllers\ReservationController::class, 'index'])
+    ->where('car_id', '[0-9]+')
+    ->name('reservation_index');
+Route::get('/reservation/book/{car_id}', [\App\Http\Controllers\ReservationController::class, 'book'])
+    ->where('car_id', '[0-9]+')
+    ->name('reservation_book');
+Route::post('/reservation/book/store/{car_id}', [\App\Http\Controllers\ReservationController::class, 'store'])
+    ->where('car_id', '[0-9]+')
+    ->name('reservation_book_store');
+Route::post('/reservation/book/store/{car_id}', [\App\Http\Controllers\ReservationController::class, 'store'])
+    ->where('car_id', '[0-9]+')
+    ->name('reservation_book_store');
+Route::get('/reservation/book/confirmation/{reservation}', [\App\Http\Controllers\ReservationController::class, 'confirmation'])
+    ->where('reservation', '[0-9]+')
+    ->name('reservation_book_confirmation');
 
 Route::group(['middleware' => 'auth','prefix' => 'dashboard'], function () {
     $allowedRoute =  ['index', 'create', 'store', 'edit', 'update', 'destroy'];
