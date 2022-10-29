@@ -2,12 +2,12 @@
 
 namespace App\Service;
 
-use App\Http\Requests\StoreReservationRequest;
+use App\Http\Requests\ReservationRequest;
 use App\Models\Client;
 
 class ClientService
 {
-    public function store(StoreReservationRequest $request): ?Client
+    public function store(ReservationRequest $request): ?Client
     {
         $client = new Client();
         $client->firstname = $request->input('firstname');
