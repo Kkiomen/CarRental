@@ -12,13 +12,13 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="py-3 px-6">
-                        Rezerwacja od
+                        Reservation from
                     </th>
                     <th scope="col" class="py-3 px-6">
-                        Rezerwacja do
+                        Reservation to
                     </th>
                     <th scope="col" class="py-3 px-6">
-                        Auto
+                        Car
                     </th>
                     <th scope="col" class="py-3 px-6">
                         Status
