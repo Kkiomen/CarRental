@@ -2,56 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\FuelType;
-use App\Enums\GearboxType;
+use App\Http\Requests\CarModelRequest;
 use App\Models\CarBrand;
 use App\Models\CarModel;
-use App\Service\CarBrandService;
 use App\Service\CarModelService;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class CarModelController extends Controller
 {
 
-    private CarBrandService $carBrandService;
     private CarModelService $carModelService;
 
-    public function __construct(CarBrandService $carBrandService, CarModelService $carModelService)
+    public function __construct(CarModelService $carModelService)
     {
-        $this->carBrandService = $carBrandService;
         $this->carModelService = $carModelService;
     }
 
-    public function index()
+    /**
+     * Display a listing of the car model.
+     * @return View
+     */
+    public function index(): View
     {
-        $cardBrands = CarModel::get();
         return view('carModel.index', [
-            'cardBrands' => $cardBrands
+            'cardBrands' => CarModel::get(),
         ]);
     }
 
-    public function create()
+
+    /**
+     * Show the form for creating a new car model.
+     * @return View|RedirectResponse
+     */
+    public function create(): View|RedirectResponse
     {
-        $brands = CarBrand::get();
+        if(CarBrand::count() == 0){
+            return Redirect::back()->with('danger', 'You must add at least one car brand');
+        }
+
         return view('carModel.create', [
-            'brands' => $brands
+            'brands' => CarBrand::get(),
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * Store a newly created car model in database.
+     * @param CarModelRequest $request
+     * @return RedirectResponse
+     */
+    public function store(CarModelRequest $request): RedirectResponse
     {
-        $request->validate([
-            'carBrand' => 'required|in:' . $this->carBrandService->getIdListToValidateSelectField(),
-            'modelImageUrl' => 'required|max:255',
-            'modelName' => 'required|max:100',
-            'enginePower' => 'required',
-            'engineCapacity' => 'required',
-            'numberDoors' => 'required|numeric',
-            'yearOfProduction' => 'required|numeric|min:1900|max:2099',
-            'fuelType' => 'required|in:' . implode(',', FuelType::getTypesToArray()),
-            'gearboxType' => 'required|in:' . implode(',', GearboxType::getTypesToArray()),
-        ]);
         $model = $this->carModelService->store($request);
         if (!$model) {
             return Redirect::back()->with('danger', 'An error occurred: Failed to save data');
@@ -60,36 +62,28 @@ class CarModelController extends Controller
     }
 
 
-    public function edit($id)
+    /**
+     * Show the form for editing the specified car model.
+     * @param CarModel $auto_model
+     * @return View
+     */
+    public function edit(CarModel $auto_model): View
     {
-        $model = CarModel::find($id);
-        if (!$model) {
-            return Redirect::back()->with('danger', 'Such a model does not exist');
-        }
-
-        $brands = CarBrand::get();
         return view('carModel.edit', [
-            'model' => $model,
-            'brands' => $brands
+            'model' => $auto_model,
+            'brands' => CarBrand::get()
         ]);
     }
 
-
-    public function update(Request $request, $id)
+    /**
+     * Update the specified car model in database.
+     * @param CarModelRequest $request
+     * @param CarModel $auto_model
+     * @return RedirectResponse
+     */
+    public function update(CarModelRequest $request, CarModel $auto_model): RedirectResponse
     {
-        $request->validate([
-            'carBrand' => 'required|in:' . $this->carBrandService->getIdListToValidateSelectField(),
-            'modelImageUrl' => 'required|max:255',
-            'modelName' => 'required|max:100',
-            'enginePower' => 'required',
-            'engineCapacity' => 'required',
-            'numberDoors' => 'required|numeric',
-            'yearOfProduction' => 'required|numeric|min:1900|max:2099',
-            'fuelType' => 'required|in:' . implode(',', FuelType::getTypesToArray()),
-            'gearboxType' => 'required|in:' . implode(',', GearboxType::getTypesToArray()),
-        ]);
-
-        $model = $this->carModelService->update($request, $id);
+        $model = $this->carModelService->update($request, $auto_model);
         if (!$model) {
             return Redirect::back()->with('danger', 'An error occurred: Failed to update data');
         }
@@ -97,9 +91,14 @@ class CarModelController extends Controller
     }
 
 
-    public function destroy($id)
+    /**
+     * Remove the car model from database.
+     * @param CarModel $auto_model
+     * @return RedirectResponse
+     */
+    public function destroy(CarModel $auto_model): RedirectResponse
     {
-        if (!$this->carModelService->delete($id)) {
+        if (!$this->carModelService->delete($auto_model)) {
             return Redirect::back()->with('danger', 'An error occurred: Failed to remove the model');
         }
         return Redirect::back()->with('success', 'Successfully removed model');
