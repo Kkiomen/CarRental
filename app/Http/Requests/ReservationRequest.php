@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ReservationAvailableDate;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReservationRequest extends FormRequest
+class ReservationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
