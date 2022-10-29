@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreReservationRequest;
+use App\Http\Requests\ReservationRequest;
 use App\Models\CarModel;
 use App\Models\Reservation;
 use App\Service\ReservationService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class ReservationController extends Controller
 {
@@ -19,49 +21,72 @@ class ReservationController extends Controller
     }
 
 
-    public function index($car_id)
+    /**
+     * Display information about the selected car
+     * @param int $car_id
+     * @return View|RedirectResponse
+     */
+    public function index(int $car_id): View|RedirectResponse
     {
-        $car = CarModel::find($car_id);
-        if (!$car) {
+        $carModel = CarModel::find($car_id);
+        if (!$carModel) {
             return Redirect::back()->with('danger', 'Such a car does not exist');
         }
 
         return view('reservation.index', [
-            'car' => $car
+            'car' => $carModel
         ]);
     }
 
-    public function book($car_id)
+    /**
+     * Display a form with the possibility of booking the selected car
+     * @param int $car_id
+     * @return View|RedirectResponse
+     */
+    public function book(int $car_id): View|RedirectResponse
     {
-        $car = CarModel::find($car_id);
-        if (!$car) {
+        $carModel = CarModel::find($car_id);
+        if (!$carModel) {
             return Redirect::back()->with('danger', 'Such a car does not exist');
         }
 
         return view('reservation.book', [
-            'car' => $car
+            'car' => $carModel
         ]);
     }
 
-    public function store(StoreReservationRequest $request, $car_id)
+    /**
+     * Store a newly created reservation in database.
+     * @param ReservationRequest $request
+     * @param int $car_id
+     * @return RedirectResponse
+     */
+    public function store(ReservationRequest $request, int $car_id): RedirectResponse
     {
-        $request->validated();
         $reservation = $this->reservationService->store($request, $car_id);
         return Redirect::route('reservation_book_confirmation', ['reservation' => $reservation]);
     }
 
-    public function confirmation(Reservation $reservation)
+    /**
+     * View booking confirmation
+     * @param Reservation $reservation
+     * @return View
+     */
+    public function confirmation(Reservation $reservation): View
     {
         return view('reservation.confirmation', [
             'reservation' => $reservation
         ]);
     }
 
-    public function list()
+    /**
+     * View booking lists in the administration panel
+     * @return View
+     */
+    public function list(): View
     {
-        $reservations = Reservation::get();
         return view('reservation.list', [
-            'reservations' => $reservations
+            'reservations' => Reservation::get()
         ]);
     }
 }

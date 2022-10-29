@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Http\Requests\StoreReservationRequest;
+use App\Http\Requests\ReservationRequest;
 use App\Models\Reservation;
 
 class ReservationService
@@ -16,7 +16,14 @@ class ReservationService
     }
 
 
-    public static function checkDatesAreAvailable($date_from, $date_to, $model_id): bool
+    /**
+     * Checking if there is another booking at this time
+     * @param string $date_from
+     * @param string $date_to
+     * @param int $model_id
+     * @return bool
+     */
+    public static function checkDatesAreAvailable(string $date_from, string $date_to, int $model_id): bool
     {
         $reservation = Reservation::whereRaw(
             "(date_from >= ? AND date_to <= ?)",
@@ -28,16 +35,19 @@ class ReservationService
         return is_null($reservation);
     }
 
-    public function store(StoreReservationRequest $request, $car_id): Reservation
+    /**
+     * Store a newly created reservation in database.
+     * @param ReservationRequest $request
+     * @param int $car_id
+     * @return Reservation
+     */
+    public function store(ReservationRequest $request, int $car_id): Reservation
     {
-
         $client = $this->clientService->store($request);
 
-        $reservation = new Reservation();
+        $reservation = new Reservation($request->all());
         $reservation->model_id = $car_id;
         $reservation->client_id = $client->id;
-        $reservation->date_from = $request->input('date_from');
-        $reservation->date_to = $request->input('date_to');
         $reservation->save();
         return $reservation;
     }
