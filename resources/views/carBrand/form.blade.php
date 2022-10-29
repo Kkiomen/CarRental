@@ -3,10 +3,10 @@
         <label for="brand-image"
                class="block text-sm font-medium text-gray-700">Brand Image (url)</label>
         <div class="mt-1 flex rounded-md shadow-sm">
-            <input type="text" name="brandImageUrl"
-                   class="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('brandImageUrl') border-red-500 @endif"
+            <input type="text" name="imageUrl"
+                   class="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('imageUrl') border-red-500 @endif"
                    placeholder="i.imgur.com/DoTdgvs.png"
-                   value="{{ old("brandImageUrl") ?? $brand->imageUrl ?? "" }}">
+                   value="{{ old("imageUrl") ?? $brand->imageUrl ?? "" }}">
         </div>
     </div>
 </div>
@@ -15,10 +15,10 @@
         <label class="block text-sm font-medium text-gray-700">Brand Name</label>
         <div class="mt-1 flex rounded-md shadow-sm">
             <input type="text"
-                   name="brandName"
-                   class="block w-full flex-1 rounded-none  rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('brandName') border-red-500 @endif"
+                   name="name"
+                   class="block w-full flex-1 rounded-none  rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('name') border-red-500 @endif"
                    placeholder="BMW"
-                   value="{{ old("brandName") ?? $brand->name ?? "" }}"
+                   value="{{ old("name") ?? $brand->name ?? "" }}"
             >
         </div>
     </div>
