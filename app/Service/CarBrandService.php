@@ -2,46 +2,59 @@
 
 namespace App\Service;
 
+use App\Http\Requests\CarBrandRequest;
 use App\Models\CarBrand;
-use Illuminate\Http\Request;
 
 class CarBrandService
 {
-    public function store(Request $request): CarBrand
+    /**
+     * Store a newly created car brand in database.
+     * @param CarBrandRequest $request
+     * @return CarBrand
+     */
+    public function store(CarBrandRequest $request): CarBrand
     {
-        $brand = new CarBrand();
-        $brand->imageUrl = $request->input('brandImageUrl');
-        $brand->name = $request->input('brandName');
+        $brand = new CarBrand($request->all());
         $brand->save();
-
         return $brand;
     }
 
-    public function update(Request $request, $id): ?CarBrand
+    /**
+     * Update the specified car brand in database.
+     * @param CarBrandRequest $request
+     * @param CarBrand $auto_brand
+     * @return CarBrand|null
+     */
+    public function update(CarBrandRequest $request, CarBrand $auto_brand): ?CarBrand
     {
         try {
-            $brand = CarBrand::findOrFail($id);
-            $brand->imageUrl = $request->input('brandImageUrl');
-            $brand->name = $request->input('brandName');
-            $brand->save();
+            $auto_brand->fill($request->all());
+            $auto_brand->save();
+            return $auto_brand;
         } catch (\Exception $exception) {
-            $brand = null;
+            return null;
         }
-
-        return $brand;
     }
 
-    public function delete(int $id): bool
+    /**
+     * Remove the car brand from database.
+     * @param CarBrand $auto_brand
+     * @return bool
+     */
+    public function delete(CarBrand $auto_brand): bool
     {
         try {
-            $brand = CarBrand::findOrFail($id);
-            $brand->delete();
+            $auto_brand->delete();
         } catch (\Exception $exception) {
             return false;
         }
         return true;
     }
 
+    /**
+     * Getting a list of id car brands (after the comma)
+     * @return string
+     */
     public function getIdListToValidateSelectField(): string
     {
         $brands = CarBrand::get()->toArray();
